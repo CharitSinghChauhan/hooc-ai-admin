@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/lib/AuthContext";
 import { googleAuth } from "@/lib/axios";
-import { useGoogleLogin } from "@react-oauth/google";
+import { CodeResponse, useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -17,7 +17,7 @@ export default function Home() {
     }
   }, [user, loading, router]);
 
-  const responseGoogle = async (authResult) => {
+  const responseGoogle = async (authResult: CodeResponse) => {
     try {
       if (authResult["code"]) {
         const result = await googleAuth(authResult["code"]);
@@ -34,9 +34,19 @@ export default function Home() {
     }
   };
 
+  const handleGoogleError = (
+    error: Pick<CodeResponse, "error" | "error_description" | "error_uri">,
+  ) => {
+    console.error("Google login failed", {
+      error: error.error,
+      description: error.error_description,
+      uri: error.error_uri,
+    });
+  };
+
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: responseGoogle,
-    onError: responseGoogle,
+    onError: handleGoogleError,
     flow: "auth-code",
   });
 

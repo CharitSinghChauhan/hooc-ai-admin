@@ -1,6 +1,7 @@
 "use client";
 
 import { getAllUsers, updateUserRole } from "@/lib/axios";
+import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 
 type User = {
@@ -26,8 +27,10 @@ const AdminPage = () => {
       const response = await getAllUsers();
       setUsers(response.data.users);
       setError("");
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to fetch users");
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+
+      setError(err.response?.data?.message ?? "Failed to fetch users");
       console.error("Error fetching users:", err);
     } finally {
       setLoading(false);
@@ -37,13 +40,16 @@ const AdminPage = () => {
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
       await updateUserRole(userId, newRole);
+
       setUsers((prev) =>
         prev.map((user) =>
           user._id === userId ? { ...user, role: newRole } : user,
         ),
       );
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Failed to update role");
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
+
+      alert(err.response?.data?.message ?? "Failed to update role");
       console.error("Error updating role:", err);
     }
   };
