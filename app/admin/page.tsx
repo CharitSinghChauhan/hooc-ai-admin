@@ -1,123 +1,81 @@
 "use client";
 
-import { getAllUsers, updateUserRole } from "@/lib/axios";
-import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-type User = {
-  _id: string;
+interface AdminRequest {
+  id: number;
   name: string;
-  email: string;
-  picture: string;
-  role: string;
-};
+  status: string;
+}
 
 const AdminPage = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [requests, setRequests] = useState<AdminRequest[]>([
+    { id: 1, name: "John Doe", status: "pending" },
+    { id: 2, name: "Jane Smith", status: "pending" },
+    { id: 3, name: "Bob Johnson", status: "pending" },
+  ]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await getAllUsers();
-      setUsers(response.data.users);
-      setError("");
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-
-      setError(err.response?.data?.message ?? "Failed to fetch users");
-      console.error("Error fetching users:", err);
-    } finally {
-      setLoading(false);
-    }
+  const handleAccept = (id: number) => {
+    setRequests((prev) =>
+      prev.map((req) =>
+        req.id == id
+          ? {
+              ...req,
+              status: "accept",
+            }
+          : req,
+      ),
+    );
   };
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
-    try {
-      await updateUserRole(userId, newRole);
+  const handleReject = (id: number) => {
+    setRequests((prev) =>
+      prev.map((req) =>
+        req.id === id
+          ? {
+              ...req,
+              status: "rejected",
+            }
+          : req,
+      ),
+    );
+  };
 
-      setUsers((prev) =>
-        prev.map((user) =>
-          user._id === userId ? { ...user, role: newRole } : user,
-        ),
+  let currentReq = requests.find((req) => req.status === "pending");
+
+  if (!currentReq) {
+    currentReq = requests.find((req) => req.status === "rejected");
+
+    if (!currentReq) {
+      return (
+        <div>
+          <p>No more pending requests.</p>
+        </div>
       );
-    } catch (error: unknown) {
-      const err = error as AxiosError<{ message: string }>;
-
-      alert(err.response?.data?.message ?? "Failed to update role");
-      console.error("Error updating role:", err);
     }
-  };
-
-  if (loading) return <div className="p-8">Loading users...</div>;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
+  }
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">User Management</h1>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 border-b text-left">User</th>
-              <th className="px-6 py-3 border-b text-left">Email</th>
-              <th className="px-6 py-3 border-b text-left">Current Role</th>
-              <th className="px-6 py-3 border-b text-left">Change Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user._id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 border-b">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={user.picture}
-                      alt={user.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <span>{user.name}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 border-b">{user.email}</td>
-                <td className="px-6 py-4 border-b">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      user.role === "super_admin"
-                        ? "bg-purple-100 text-purple-800"
-                        : user.role === "admin"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
-                </td>
-                <td className="px-6 py-4 border-b">
-                  <select
-                    value={user.role}
-                    onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                    className="border border-gray-300 rounded px-3 py-1"
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                    <option value="super_admin">Super Admin</option>
-                  </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Admin Request</h1>
+      <div className="border p-4 rounded">
+        <div className="mt-4 space-x-2 flex justify-center items-center gap-4">
+          <button
+            onClick={() => handleAccept(currentReq.id)}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Accept
+          </button>
+          <p>Name: {currentReq.name}</p>
+          <p>Status: {currentReq.status}</p>
+          <button
+            onClick={() => handleReject(currentReq.id)}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Reject
+          </button>
+        </div>
       </div>
-
-      {users.length === 0 && (
-        <p className="text-center text-gray-500 mt-8">No users found</p>
-      )}
     </div>
   );
 };

@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
         } catch (error) {
-          console.log("removing the jwt&user")
+          console.log("removing the jwt&user");
           localStorage.removeItem("jwt-token");
           localStorage.removeItem("user-info");
         }

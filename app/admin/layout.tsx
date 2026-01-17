@@ -1,10 +1,12 @@
-import { ReactNode } from "react";
-import AdminGuard from "./admin-guard";
+import React, { ReactNode } from "react";
+import AdminGuard from "../admin/admin-guard";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+const AdminLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div>
       <AdminGuard>{children}</AdminGuard>
     </div>
   );
-}
+};
+
+export default AdminLayout;

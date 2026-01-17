@@ -4,23 +4,23 @@ import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 
-const AdminGuard = ({ children }: { children: ReactNode }) => {
+export default function SuperAdminGuard({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && user?.role !== "admin") {
+    if (!loading && user?.role !== "super_admin") {
       router.push("/");
     }
   }, [user, loading, router]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  if (!user || user.role !== "admin") {
+  if (!user || user.role !== "super_admin") {
     return null;
   }
 
-  return <div>{children}</div>;
-};
-
-export default AdminGuard;
+  return <>{children}</>;
+}
