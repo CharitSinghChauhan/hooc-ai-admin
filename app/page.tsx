@@ -11,13 +11,13 @@ export default function Home() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && user?.role === "super_admin") {
-      router.push("/super-admin");
-    }else if (!loading && user?.role === "admin"){
-      router.push("admin")
-    }
-  }, [user, loading, router]);
+  // useEffect(() => {
+  //   if (!loading && user?.role === "super_admin") {
+  //     router.push("/super-admin");
+  //   } else if (!loading && user?.role === "admin") {
+  //     router.push("/admin");
+  //   }
+  // }, [user, loading, router]);
 
   const responseGoogle = async (authResult: CodeResponse) => {
     try {
@@ -53,16 +53,51 @@ export default function Home() {
   });
 
   return (
-    <div className="w-screen ">
-      <nav className="flex justify-center w-full ">
-        <button
-          onClick={() => handleGoogleLogin()}
-          className="rounded-md border-2 border-slate-300 p-2"
-        >
-          logIn
-        </button>
-        <div className="">Name: {user?.name}</div>
+    <div className="w-screen min-h-screen bg-gray-50">
+      <nav className="flex justify-between items-center w-full px-8 py-4 bg-white shadow-sm border-b border-gray-200">
+        <div className="text-xl font-bold text-gray-800">Hooc AI</div>
+
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                {/* Use img for external Google URLs to avoid next/image config issues for now */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={user.picture}
+                  alt={user.name}
+                  className="w-10 h-10 rounded-full border border-gray-200"
+                />
+                <div className="hidden sm:block">
+                  <p className="text-sm font-semibold text-gray-700">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-gray-500 capitalize">
+                    {user.role.replace("_", " ")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => handleGoogleLogin()}
+              className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              Sign in with Google
+            </button>
+          )}
+        </div>
       </nav>
+
+      {/* Main Content Placeholder */}
+      <main className="flex flex-col items-center justify-center p-20 text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Welcome to HOOC AI
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl">
+          Please log in to verify your account and access the dashboard.
+        </p>
+      </main>
     </div>
   );
 }

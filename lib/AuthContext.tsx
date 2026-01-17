@@ -27,6 +27,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const login = (newToken: string, newUser: User) => {
+    localStorage.setItem("jwt-token", newToken);
+    localStorage.setItem("user-info", JSON.stringify(newUser));
+    setToken(newToken);
+    setUser(newUser);
+    if (!loading && user?.role === "super_admin") {
+      router.push("/super-admin");
+    } else if (!loading && user?.role === "admin") {
+      router.push("/admin");
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("jwt-token");
+    localStorage.removeItem("user-info");
+    setToken(null);
+    setUser(null);
+    router.push("/");
+  };
+
+  const refreshUser = async () => {
+    try {
+      const response = await getUserProfile();
+      const fetchUser = response.data.user;
+      if (!fetchUser) {
+        return logout();
+      }
+      localStorage.setItem("user-info", JSON.stringify(fetchUser));
+      setUser(fetchUser);
+    } catch (error) {
+      console.log("Error refreshing user profile, logging out");
+      logout();
+    }
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       if (typeof window === "undefined") {
@@ -41,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           await getUserProfile();
           setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+          await refreshUser();
         } catch (error) {
           console.log("removing the jwt&user");
           localStorage.removeItem("jwt-token");
@@ -53,21 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkAuth();
   }, []);
-
-  const login = (newToken: string, newUser: User) => {
-    localStorage.setItem("jwt-token", newToken);
-    localStorage.setItem("user-info", JSON.stringify(newUser));
-    setToken(newToken);
-    setUser(newUser);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("jwt-token");
-    localStorage.removeItem("user-info");
-    setToken(null);
-    setUser(null);
-    router.push("/");
-  };
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, logout }}>
