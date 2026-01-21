@@ -11,13 +11,13 @@ export default function Home() {
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (!loading && user?.role === "super_admin") {
-  //     router.push("/super-admin");
-  //   } else if (!loading && user?.role === "admin") {
-  //     router.push("/admin");
-  //   }
-  // }, [user, loading, router]);
+  useEffect(() => {
+    if (!loading && user?.role === "super_admin") {
+      router.push("/super-admin");
+    } else if (!loading && user?.role === "admin") {
+      router.push("/admin");
+    }
+  }, [user, loading, router]);
 
   const responseGoogle = async (authResult: CodeResponse) => {
     try {
