@@ -1,4 +1,5 @@
 "use client";
+
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Field,
@@ -8,30 +9,42 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import z from "zod";
-import { DatePickerInput } from "@/components/date-picker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { pdf } from "@react-pdf/renderer";
-import PdfTemplate from "./pdf-template";
+import { DatePickerInput } from "@/components/date-picker";
+import PdfTemplateUnpaid from "./templates/pdf-template-unpaid";
+import PdfTemplatePaid from "./templates/pdf-template-paid";
 
 const formSchema = z
   .object({
     fullname: z.string().min(1, "Fullname is required"),
     email: z.email(),
-    DOJ: z.date(),
-    till_date: z.string().optional(),
-    paymentType: z.enum(["stipend", "unpaid"]),
-    amount: z.number().positive().optional(),
+    DOJ: z.date({ error: "Date of Joining is required" }),
+    till_date: z.date({ error: "Till date is required" }),
+    paymentType: z.enum(["stipend", "unpaid"], {
+      error: "Payment type is required",
+    }),
+    fixed: z.number().positive().optional(),
+    variable: z.number().positive().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.paymentType === "stipend") {
-      if (!data.amount || data.amount <= 0) {
+      if (!data.fixed || data.fixed <= 0) {
+        ctx.addIssue({
+          // TODO : fix
+          code: z.ZodIssueCode.custom,
+          message: "Fixed stipend is required when payment type is stipend",
+          path: ["fixed"],
+        });
+      }
+      if (!data.variable || data.variable < 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Amount is required for stipend",
-          path: ["amount"],
+          message: "Variable stipend is required when payment type is stipend",
+          path: ["variable"],
         });
       }
     }
@@ -41,19 +54,27 @@ const SignUpPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullname: "",
-      email: "",
-      DOJ: new Date(),
+      fullname: "Charit Singh Chauhan",
+      email: "charitsinghchauhan@gmail.com",
       paymentType: "stipend",
+      DOJ: new Date(),
+      till_date: new Date(),
+      variable: 1000,
+      fixed: 2000,
     },
   });
 
-  const paymentType = form.watch("paymentType");
+  const paymentType = useWatch({
+    control: form.control,
+    name: "paymentType",
+  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
     try {
-      const blob = await pdf(<PdfTemplate data={values} />).toBlob();
+      const Template =
+        values.paymentType === "stipend" ? PdfTemplatePaid : PdfTemplateUnpaid;
+      const blob = await pdf(<Template data={values} />).toBlob();
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank");
     } catch (error) {
@@ -107,12 +128,17 @@ const SignUpPage = () => {
                 <Controller
                   name="DOJ"
                   control={form.control}
-                  render={({ field }) => (
-                    <DatePickerInput
-                      title="Date of Joining"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <DatePickerInput
+                        title="Date of Joining"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
 
@@ -120,18 +146,11 @@ const SignUpPage = () => {
                   name="till_date"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field
-                      data-invalid={fieldState.invalid}
-                      className="w-[50%] mx-auto"
-                    >
-                      <FieldLabel htmlFor="till_date">
-                        Valid Till (Optional)
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        id="till_date"
-                        aria-invalid={fieldState.invalid}
-                        placeholder="DD/MM/YYYY"
+                    <Field data-invalid={fieldState.invalid}>
+                      <DatePickerInput
+                        title="Valid Till"
+                        value={field.value}
+                        onChange={field.onChange}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -180,31 +199,58 @@ const SignUpPage = () => {
                 </div>
 
                 {paymentType === "stipend" && (
-                  <Controller
-                    name="amount"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <Input
-                          {...field}
-                          value={field.value ?? ""}
-                          type="number"
-                          placeholder="Amount"
-                          autoComplete="off"
-                          aria-invalid={fieldState.invalid}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            field.onChange(
-                              value === "" ? undefined : Number(value),
-                            );
-                          }}
-                        />
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
+                  <div className="flex gap-4">
+                    <Controller
+                      name="fixed"
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <Input
+                            {...field}
+                            value={field.value ?? ""}
+                            type="number"
+                            placeholder="Fixed stipend"
+                            autoComplete="off"
+                            aria-invalid={fieldState.invalid}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                    <Controller
+                      name="variable"
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <Input
+                            {...field}
+                            value={field.value ?? ""}
+                            type="number"
+                            placeholder="variable stipend"
+                            autoComplete="off"
+                            aria-invalid={fieldState.invalid}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
                 )}
               </div>
             </FieldGroup>

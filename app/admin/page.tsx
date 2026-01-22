@@ -62,7 +62,7 @@ const AdminPage = () => {
         <div className="mt-4 space-x-2 flex justify-center items-center gap-4">
           <button
             onClick={() => handleAccept(currentReq.id)}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            className="px-4 py-2 bg-green-500  rounded hover:bg-green-600"
           >
             Accept
           </button>
@@ -70,7 +70,7 @@ const AdminPage = () => {
           <p>Status: {currentReq.status}</p>
           <button
             onClick={() => handleReject(currentReq.id)}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="px-4 py-2 bg-red-500  rounded hover:bg-red-600"
           >
             Reject
           </button>

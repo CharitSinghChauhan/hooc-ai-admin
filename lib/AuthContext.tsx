@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUserProfile } from "./axios";
 
-interface User {
+export interface User {
   name: string;
   email: string;
   picture: string;

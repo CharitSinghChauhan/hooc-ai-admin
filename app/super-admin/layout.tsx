@@ -7,7 +7,7 @@ export default function SuperAdminLayout({
   children: ReactNode;
 }) {
   return (
-    <div>
+    <div className="text-black">
       <SuperAdminGuard>{children}</SuperAdminGuard>
     </div>
   );

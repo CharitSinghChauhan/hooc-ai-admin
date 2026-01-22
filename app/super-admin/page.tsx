@@ -11,6 +11,16 @@ import {
 } from "@/components/ui/table";
 import { getAllUsers, updateUserRole } from "@/lib/axios";
 import { AxiosError } from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 type User = {
   _id: string;
@@ -60,6 +70,19 @@ export default function AdminPage() {
     }
   };
 
+  const getRoleVariant = (role: string) => {
+    console.log(role)
+    switch (role) {
+      case "super_admin":
+        return "destructive";
+      case "admin":
+        return "default";
+      case "user":
+      default:
+        return "secondary";
+    }
+  };
+
   if (loading) return <div className="p-8">Loading users...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
@@ -89,40 +112,39 @@ export default function AdminPage() {
                 <TableRow key={user._id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={user.picture}
-                        alt={user.name}
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <span>{user.name}</span>
+                      <Avatar>
+                        <AvatarImage
+                          src={`${user.picture}`}
+                          alt="user-profile"
+                        />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
                     </div>
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        user.role === "super_admin"
-                          ? "bg-purple-100 text-purple-800"
-                          : user.role === "admin"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
+                    <Badge variant={getRoleVariant(user.role)}>
                       {user.role}
-                    </span>
+                    </Badge>
                   </TableCell>
                   <TableCell>
-                    <select
+                    <Select
                       value={user.role}
-                      onChange={(e) =>
-                        handleRoleChange(user._id, e.target.value)
-                      }
-                      className="border border-gray-300 rounded px-3 py-1 bg-white"
+                      onValueChange={(role) => handleRoleChange(user._id, role)}
                     >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                      <option value="super_admin">Super Admin</option>
-                    </select>
+                      <SelectTrigger className="w-full max-w-48">
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent className="">
+                        <SelectGroup>
+                          <SelectItem value="user">user</SelectItem>
+                          <SelectItem value="admin">admin</SelectItem>
+                          <SelectItem value="super_admin">
+                            super_admin
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                 </TableRow>
               ))
