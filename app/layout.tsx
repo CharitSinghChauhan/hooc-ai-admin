@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased bg-mesh min-h-screen text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased bg-mesh min-h-screen h-screen text-white`}
       >
         <GoogleOAuthProvider clientId={client_id}>
           <AuthProvider>{children}</AuthProvider>

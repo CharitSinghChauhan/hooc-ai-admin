@@ -126,8 +126,5 @@
 }
 
 .bg-mesh {
-    background-image: url("/image-mesh-gradient.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    @apply bg-[url("/download.png")] bg-cover bg-center bg-no-repeat bg-fixed
 }

@@ -6,9 +6,9 @@ import { useAuth } from "@/lib/AuthContext";
 import { googleAuth } from "@/lib/axios";
 import { CodeResponse, useGoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Home() {
+  // TODO : auth loader
   const { login, user, loading } = useAuth();
 
   const router = useRouter();

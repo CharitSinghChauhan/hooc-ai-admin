@@ -1,3 +1,5 @@
+import { TextEffect } from "@/components/motion-primitives/text-effect";
+import { TextShimmer } from "@/components/motion-primitives/text-shimmer";
 import { Button } from "@/components/ui/button";
 import { User } from "@/lib/AuthContext";
 import { ArrowRight } from "lucide-react";
@@ -15,17 +17,32 @@ export function Hero({
       <div className="container mx-auto px-4 md:px-6 relative z-10 flex flex-col items-center text-center">
         {/* Pill/Badge */}
         {/*TODO : Apple button glass effect*/}
-        <div className="flex items-center justify-center gap-2 px-4 py-1 text-sm mb-8 rounded-full bg-white/30 backdrop-blur-md ">
+        <div className="flex items-center justify-center gap-2 px-4 py-1 text-sm mb-8 rounded-full bg-white">
           <span className="">🚀</span>
-          <span className="">|</span>
-          <span className="text-xs ">Offer Letter Generation</span>
+          <span className="text-black">|</span>
+          <TextShimmer className="text-xs font-light tracking-tight" duration={1}>
+            Offer Letter Generation
+          </TextShimmer>
         </div>
 
         {/* Headline */}
-        <h1 className="text-4xl md:text-4xl lg:text-5xl font-serif font-medium italic tracking-tighter mb-6 max-w-4xl ">
-          Extract & Export tables
-          <br className="hidden md:block" />
-          from any PDF Instantly
+
+        <h1 className="text-4xl md:text-4xl lg:text-6xl font-serif font-medium italic tracking-tighter mb-6 max-w-4xl ">
+          <TextEffect
+            preset="fade-in-blur"
+            speedReveal={1.1}
+            speedSegment={0.3}
+            className=""
+          >
+            Extract & Export tables
+          </TextEffect>
+          <TextEffect
+            preset="fade-in-blur"
+            speedReveal={1.1}
+            speedSegment={0.3}
+          >
+            from any PDF Instantly
+          </TextEffect>
         </h1>
 
         {/* Subheadline */}
@@ -37,11 +54,11 @@ export function Hero({
 
         {/* CTA Button */}
         {user ? (
-          <Button
-            className="text-sm  py-0.5 px-4"
-            variant={"default"}
-          >
-            <Link href="/super-admin" className="flex justify-between items-center gap-2">
+          <Button className="text-sm  py-0.5 px-4" variant={"default"}>
+            <Link
+              href="/super-admin"
+              className="flex justify-between items-center gap-2"
+            >
               <ArrowRight />
               <span>Try for free</span>
             </Link>
