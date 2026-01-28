@@ -8,9 +8,10 @@ import {
   Image,
 } from "@react-pdf/renderer";
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    paddingHorizontal: 40,
+    paddingTop: 20,
     fontSize: 11,
     fontFamily: "Helvetica",
     lineHeight: 1.6,
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 5,
-    paddingBottom: 5,
+    paddingBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#EEEEEE",
     alignItems: "center",
@@ -31,13 +32,13 @@ const styles = StyleSheet.create({
   },
   logoTextSection: {
     flexDirection: "column",
-    marginLeft: 5,
+    marginLeft: 0,
   },
   logoText: {
     fontSize: 24,
     color: "#2E3B89",
     fontFamily: "Helvetica-Bold",
-    letterSpacing: 1,
+    marginBottom: 5,
   },
   tagline: {
     fontSize: 8,
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
   },
   addressBlock: {
     marginBottom: 20,
+    lineHeight : 0.8
   },
   dateLine: {
     marginBottom: 20,
@@ -92,6 +94,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    lineHeight: 0.8,
   },
   signatureBlock: {
     marginTop: 10,
@@ -104,10 +107,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   logoImage: {
-    width: 60,
-    height: 60,
-    objectFit: "fit",
-    border : "2px solid black"
+    width: "70",
+    height: "40",
+    objectFit: "cover",
   },
   backgroundImage: {
     position: "absolute",

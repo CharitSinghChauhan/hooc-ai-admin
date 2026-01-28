@@ -20,8 +20,11 @@ export function Hero({
         <div className="flex items-center justify-center gap-2 px-4 py-1 text-sm mb-8 rounded-full bg-white">
           <span className="">🚀</span>
           <span className="text-black">|</span>
-          <TextShimmer className="text-xs font-light tracking-tight" duration={1}>
-            Offer Letter Generation
+          <TextShimmer
+            className="text-xs font-light tracking-tight"
+            duration={1}
+          >
+            Corporate Document Automation
           </TextShimmer>
         </div>
 
@@ -34,22 +37,22 @@ export function Hero({
             speedSegment={0.3}
             className=""
           >
-            Extract & Export tables
+            Professional Corporate
           </TextEffect>
           <TextEffect
             preset="fade-in-blur"
             speedReveal={1.1}
             speedSegment={0.3}
           >
-            from any PDF Instantly
+            Documents in Seconds
           </TextEffect>
         </h1>
 
         {/* Subheadline */}
         <p className="text-sm max-w-4xl mb-10 leading-relaxed /80 flex-wrap">
-          Stop wasting hours on manual paperwork. Generates professional offer
-          letters with perfect accuracy. Export to PDF, send via email, and
-          track acceptance instantly.
+          The all-in-one platform for HR correspondence. Generate offer letters,
+          NDAs, appointment letters, and other corporate documents with
+          precision and speed.
         </p>
 
         {/* CTA Button */}
@@ -89,7 +92,7 @@ export function Hero({
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-xl font-bold ">&lt; 30s</span>
-            <span className="text-xs">Per Offer Letter</span>
+            <span className="text-xs">Per Document</span>
           </div>
         </div>
       </div>

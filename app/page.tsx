@@ -1,7 +1,7 @@
 "use client";
 
-import { Navbar } from "@/app/user/offer-letter/components/navbar";
-import { Hero } from "@/app/user/offer-letter/components/hero";
+import { Navbar } from "@/components/navbar";
+import { Hero } from "@/components/hero";
 import { useAuth } from "@/lib/AuthContext";
 import { googleAuth } from "@/lib/axios";
 import { CodeResponse, useGoogleLogin } from "@react-oauth/google";
